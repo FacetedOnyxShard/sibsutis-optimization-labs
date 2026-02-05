@@ -106,9 +106,8 @@ class Fraction:
     
     def __abs__(self):
         numerator = abs(self.numerator)
-        denominator = abs(self.denominator)
         
-        return Fraction(numerator, denominator)
+        return Fraction(numerator, self.denominator)
     
     def __str__(self):
         if self.denominator == 1:
