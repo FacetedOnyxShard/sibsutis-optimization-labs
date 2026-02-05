@@ -13,12 +13,12 @@ class Fraction:
             numerator = -numerator
             denominator = abs(denominator)
         
-        k = self.gcd(numerator, denominator)
+        divider = self.gcd(numerator, denominator)
         if denominator < 0:
-            k = -k
+            divider = -divider
 
-        self.numerator = numerator // k
-        self.denominator = denominator // k
+        self.numerator = numerator // divider
+        self.denominator = denominator // divider
     
     def __check_type(self, other):
         if not isinstance(other, Fraction):
@@ -115,5 +115,3 @@ class Fraction:
             return str(self.numerator)
         
         return f"{self.numerator}/{self.denominator}"
-    
-print(Fraction(1, 6) + Fraction(1, 6))
