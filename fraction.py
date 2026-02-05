@@ -32,19 +32,47 @@ class Fraction:
     
     def __add__(self, other):
         self.__check_type(other)
+        
+        gcd_den = self.gcd(self.denominator, other.denominator)
+        
+        if gcd_den == 1:
+            numerator = (self.numerator * other.denominator + 
+                        other.numerator * self.denominator)
+            denominator = self.denominator * other.denominator
+        else:
+            term1 = other.denominator // gcd_den
+            term2 = self.denominator // gcd_den
+            
+            numerator = self.numerator * term1 + other.numerator * term2
+            denominator = self.denominator * term1
+        
+        gcd_res = self.gcd(numerator, denominator)
+        if denominator < 0:
+            gcd_res = -gcd_res
+        
+        return Fraction(numerator // gcd_res, denominator // gcd_res)
 
-        numerator = self.numerator * other.denominator + other.numerator * self.denominator
-        denominator = self.denominator * other.denominator
-
-        return Fraction(numerator, denominator)
-    
     def __sub__(self, other):
         self.__check_type(other)
-
-        numerator = self.numerator * other.denominator - other.numerator * self.denominator
-        denominator = self.denominator * other.denominator
-
-        return Fraction(numerator, denominator)
+        
+        gcd_den = self.gcd(self.denominator, other.denominator)
+        
+        if gcd_den == 1:
+            numerator = (self.numerator * other.denominator - 
+                        other.numerator * self.denominator)
+            denominator = self.denominator * other.denominator
+        else:
+            term1 = other.denominator // gcd_den
+            term2 = self.denominator // gcd_den
+            
+            numerator = self.numerator * term1 - other.numerator * term2
+            denominator = self.denominator * term1
+        
+        gcd_res = self.gcd(numerator, denominator)
+        if denominator < 0:
+            gcd_res = -gcd_res
+        
+        return Fraction(numerator // gcd_res, denominator // gcd_res)
     
     def __mul__(self, other):
         self.__check_type(other)
