@@ -70,10 +70,10 @@ class TestFractionInitialization:
     
     def test_zero_denominator(self):
         """Нулевой знаменатель"""
-        with pytest.raises(ZeroDivisionError, match="Denominator must be non-zero"):
+        with pytest.raises(ValueError, match="Denominator must be non-zero"):
             Fraction(1, 0)
         
-        with pytest.raises(ZeroDivisionError, match="Denominator must be non-zero"):
+        with pytest.raises(ValueError, match="Denominator must be non-zero"):
             Fraction(0, 0)
 
 class TestFractionArithmetic:

@@ -4,7 +4,7 @@ class Fraction:
             raise TypeError("Fraction must be integer")
         
         if denominator == 0:
-            raise ZeroDivisionError("Denominator must be non-zero")
+            raise ValueError("Denominator must be non-zero")
         
         if numerator < 0 and denominator < 0:
             numerator = abs(numerator)
