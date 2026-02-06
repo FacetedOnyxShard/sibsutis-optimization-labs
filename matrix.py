@@ -18,7 +18,7 @@ def print_matrix(matrix: list[list[Fraction]]) -> None:
 
 
 def transform_matrix(matrix: list[list[Fraction]], row: int, col: int):
-    transformed_matrix = matrix_copy(matrix)
+    transformed_matrix = copy_matrix(matrix)
     enabling_element = matrix[row][col]
 
     for j in range(len(matrix[row])):
@@ -43,12 +43,12 @@ def find_enabling_element(a_matrix: list[list[Fraction]], current_row: int):
     return column
 
 
-def matrix_copy(matrix):
+def copy_matrix(matrix: list[list[Fraction]]):
     matrix_copy = [row[:] for row in matrix]
     return matrix_copy
 
 
-def calculate_elements(a, a_hat, row, col):
+def calculate_elements(a, a_hat, row: int, col: int):
     enabling_element = a[row][col]
 
     for crow in range(len(a)):
@@ -63,7 +63,7 @@ def calculate_elements(a, a_hat, row, col):
             a_hat[crow][ccol] = current_element - (koef * a[row][ccol])
 
 
-def strike_zero_rows(matrix, row) -> list[list[Fraction]]:
+def strike_zero_rows(matrix: list[list[Fraction]], row) -> list[list[Fraction]]:
     zero_rows = []
     for crow in range(row + 1, len(matrix)):
         is_zero = True
@@ -88,7 +88,7 @@ def strike_zero_rows(matrix, row) -> list[list[Fraction]]:
 
 
 def Gauss_Jordan_elimination(original_matrix):
-    a = matrix_copy(original_matrix)
+    a = copy_matrix(original_matrix)
 
     for row in range(len(a)):
         if row >= len(a):
@@ -97,7 +97,7 @@ def Gauss_Jordan_elimination(original_matrix):
         a_hat = transform_matrix(a, row, col)
         calculate_elements(a, a_hat, row, col)
         a_hat = strike_zero_rows(a_hat, row)
-        a = matrix_copy(a_hat)
+        a = copy_matrix(a_hat)
 
     # нужно получать
     # либо бесконечно много решений и выводить общее решение
@@ -107,10 +107,12 @@ def Gauss_Jordan_elimination(original_matrix):
     return a
 
 
-def FractionMatrixEqual(m1, m2) -> bool:
-    for i in range(len(m1)):
-        for j in range(len(m2)):
-            if m1[i][j] != m2[i][j]:
+def matrices_are_equal(
+    matrix1: list[list[Fraction]], matrix2: list[list[Fraction]]
+) -> bool:
+    for i in range(len(matrix1)):
+        for j in range(len(matrix2)):
+            if matrix1[i][j] != matrix2[i][j]:
                 return False
 
     return True
