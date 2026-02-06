@@ -1,6 +1,7 @@
 from fraction import Fraction
 import copy
 from operator import itemgetter
+from sympy import symbols, simplify, Add, solve, Eq
 
 
 def read_matrix_from_file(filename: str) -> list[list[Fraction]]:
@@ -114,6 +115,10 @@ def select_main_element(matrix, cur_row):
     return ccol
 
 
+def write_intermediate_matrix_to_file(filepath, matrix):
+    pass
+
+
 def Gauss_Jordan_elimination(original_matrix):
     a = matrix_copy(original_matrix)
 
@@ -130,15 +135,93 @@ def Gauss_Jordan_elimination(original_matrix):
         a_hat = strike_zero_rows(a_hat, row)
         a = matrix_copy(a_hat)
 
-    # нужно выводить промежуточные матрицы,
-    # после каждого шага исключений
-
-    # нужно получать
-    # либо бесконечно много решений и выводить общее решение
-    # либо нет решений
-    # либо одно решение находить его и выводить переменные
+        write_intermediate_matrix_to_file(".", a)
 
     return a
+
+
+def have_incorrect_row(matrix):
+    res = False
+
+    for i in range(len(matrix)):
+        is_zero_row = True
+        last_element_in_row = matrix[i][len(matrix[i]) - 1]
+        for j in range(len(matrix) - 1):
+            if matrix[i][j] != Fraction(0):
+                is_zero_row = False
+                break
+
+        if is_zero_row and last_element_in_row != Fraction(0):
+            res = True
+            break
+
+    return res
+
+
+def is_identity_matrix(matrix):
+    current_k = 0
+    if len(matrix) != len(matrix[0]) - 1:
+        return False
+
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i]) - 1):
+            if j == current_k:
+                if not matrix[i][j] == Fraction(1):
+                    return False
+            else:
+                if not matrix[i][j] == Fraction(0):
+                    return False
+        current_k += 1
+
+    return True
+
+
+def find_common_solution(matrix):
+    solutions = []
+    for i, row in enumerate(matrix):
+        expression = create_linear_expression(len(row) - 1)
+        equation = Eq(expression, row[-1])
+
+        for j, value in enumerate(row):
+            equation = equation.subs(f"k{j + 1}", value)
+
+        solution = solve(equation, f"x{i + 1}")
+        solutions.append((f"x{i + 1}", solution[0]))
+
+    return solutions
+
+
+def find_system_solution(matrix):
+    answer = "нет решений"
+    answer_system = {}
+
+    if have_incorrect_row(matrix):
+        pass
+    elif is_identity_matrix(matrix):
+        answer = "одно решение"
+        for i, row in enumerate(matrix, start=1):
+            key = f"x{i}"
+            answer_system[key] = row[-1]
+    else:
+        answer = "бесконечно много решений"
+        solutions = find_common_solution(matrix)
+        for key, value in solutions:
+            answer_system[key] = value
+
+    return (answer, answer_system)
+
+
+def write_answer_to_file(filepath, answer_object):
+    pass
+
+
+def solve_linear_system(matrix):
+    eliminated_matrix = Gauss_Jordan_elimination(matrix)
+
+    answer, answer_system = find_system_solution(eliminated_matrix)
+
+    answer_object = {"answer": answer, "answer_system": answer_system}
+    write_answer_to_file(".", answer_object)
 
 
 def FractionMatrixEqual(m1, m2) -> bool:
@@ -150,18 +233,20 @@ def FractionMatrixEqual(m1, m2) -> bool:
     return True
 
 
+def create_linear_expression(n):
+    var_symbols = symbols([f"x{i + 1}" for i in range(n)])
+    coef_symbols = symbols([f"k{i + 1}" for i in range(n)])
+
+    terms = [coef * var for coef, var in zip(coef_symbols, var_symbols)]
+    expression = Add(*terms)
+    return expression
+
+
 def main() -> None:
-    matrix = [[0 for _ in range(10)] for _ in range(10)]
-
-    for col in range(len(matrix[1])):
-        matrix[1][col] = 1
-
-    second_row = matrix[1]
-
-    for col in range(len(second_row)):
-        second_row[col] = 10
-
-    print(matrix)
+    expr = create_linear_expression(2)
+    equation = Eq(expr, 10)
+    equation = equation.subs("k1", 10)
+    print(equation)
 
 
 if __name__ == "__main__":
