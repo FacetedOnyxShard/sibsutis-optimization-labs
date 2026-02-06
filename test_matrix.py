@@ -24,3 +24,66 @@ def test_first_step():
     ]
 
     assert FractionMatrixEqual(a, expected_matrix_after_first_transform) == True
+
+
+def test_strike_rows():
+    # 1 0 2 -8 3 -2
+    # 0 1 -12 2 2 3
+    # 0 0 0 0 0 0
+    # 0 0 0 3 0 -1
+    # 0 0 0 0 0 0
+    original_matrix = read_matrix_from_file("./test_matrix/zero_rows.txt")
+
+    # 1 0 2 -8 3 -2
+    # 0 1 -12 2 2 3
+    # 0 0 0 3 0 -1
+    expected_matrix = [
+        [
+            Fraction(1),
+            Fraction(0),
+            Fraction(2),
+            Fraction(-8),
+            Fraction(3),
+            Fraction(-2),
+        ],
+        [
+            Fraction(0),
+            Fraction(1),
+            Fraction(-12),
+            Fraction(2),
+            Fraction(2),
+            Fraction(3),
+        ],
+        [Fraction(0), Fraction(0), Fraction(0), Fraction(3), Fraction(0), Fraction(-1)],
+    ]
+
+    # вычеркивание работает после подсчета 2 строки
+    row = 1  # индекс второй строки 1
+    a = matrix_copy(original_matrix)
+    a = strike_zero_rows(a, row)
+
+    assert FractionMatrixEqual(a, expected_matrix) == True
+
+
+def test_matrix_transformation():
+    original_matrix = read_matrix_from_file("./test_matrix/pr04_task.txt")
+
+    #  1  -1/2   0    0  -1/2  | -1/2
+    #  0    0    1    0     4  |  3
+    #  0    0    0    1     0  |  0
+    expected_matrix = [
+        [
+            Fraction(1),
+            Fraction(-1, 2),
+            Fraction(0),
+            Fraction(0),
+            Fraction(-1, 2),
+            Fraction(-1, 2),
+        ],
+        [Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(4), Fraction(3)],
+        [Fraction(0), Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(0)],
+    ]
+
+    res = Gauss_Jordan_elimination(original_matrix)
+
+    assert FractionMatrixEqual(res, expected_matrix) == True

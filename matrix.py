@@ -63,23 +63,48 @@ def calculate_elements(a, a_hat, row, col):
             a_hat[crow][ccol] = current_element - (koef * a[row][ccol])
 
 
+def strike_zero_rows(matrix, row) -> list[list[Fraction]]:
+    zero_rows = []
+    for crow in range(row + 1, len(matrix)):
+        is_zero = True
+        for j in range(len(matrix[crow])):
+            if matrix[crow][j] != Fraction(0):
+                is_zero = False
+
+        if is_zero:
+            zero_rows.append(crow)
+
+    new_matrix = []
+    cur_zero_row_idx = 0
+    for i, row in enumerate(matrix):
+        if len(zero_rows) != 0 and i == zero_rows[cur_zero_row_idx]:
+            if cur_zero_row_idx < len(zero_rows) - 1:
+                cur_zero_row_idx += 1
+            continue
+
+        new_matrix.append(row)
+
+    return new_matrix
+
+
 def Gauss_Jordan_elimination(original_matrix):
     a = matrix_copy(original_matrix)
 
     for row in range(len(a)):
+        if row >= len(a):
+            break
         col = find_enabling_element(a, row)
         a_hat = transform_matrix(a, row, col)
         calculate_elements(a, a_hat, row, col)
+        a_hat = strike_zero_rows(a_hat, row)
         a = matrix_copy(a_hat)
-
-    # нужно добавить вычеркивание строк, состоящих из 0
 
     # нужно получать
     # либо бесконечно много решений и выводить общее решение
     # либо нет решений
     # либо одно решение находить его и выводит переменные
 
-    return a_hat
+    return a
 
 
 def FractionMatrixEqual(m1, m2) -> bool:
@@ -91,15 +116,27 @@ def FractionMatrixEqual(m1, m2) -> bool:
     return True
 
 
-# def main() -> None:
-#     original_matrix = read_matrix_from_file("test_matrix/pr01.txt")
+def main() -> None:
+    original_matrix = read_matrix_from_file("./test_matrix/pr04_task.txt")
 
-#     print("Результат:")
-#     print_matrix(a)
+    #  1  -1/2   0    0  -1/2  | -1/2
+    #  0    0    1    0     4  |  3
+    #  0    0    0    1     0  |  0
+    expected_matrix = [
+        [
+            Fraction(1),
+            Fraction(-1, 2),
+            Fraction(0),
+            Fraction(0),
+            Fraction(-1, 2),
+            Fraction(-1, 2),
+        ],
+        [Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(4), Fraction(3)],
+        [Fraction(0), Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(0)],
+    ]
 
-#     print("Ожидаемое значение:")
-#     print_matrix(expected_matrix_after_first_transform)
+    res = Gauss_Jordan_elimination(original_matrix)
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
