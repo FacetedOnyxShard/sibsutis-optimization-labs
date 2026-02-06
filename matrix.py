@@ -135,7 +135,7 @@ def Gauss_Jordan_elimination(original_matrix):
         a_hat = strike_zero_rows(a_hat, row)
         a = matrix_copy(a_hat)
 
-        write_intermediate_matrix_to_file(".", a)
+        write_intermediate_matrix_to_file("./matrix.json", a)
 
     return a
 
@@ -221,7 +221,7 @@ def solve_linear_system(matrix):
     answer, answer_system = find_system_solution(eliminated_matrix)
 
     answer_object = {"answer": answer, "answer_system": answer_system}
-    write_answer_to_file(".", answer_object)
+    write_answer_to_file("./answer.json", answer_object)
 
 
 def FractionMatrixEqual(m1, m2) -> bool:
