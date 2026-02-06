@@ -1,5 +1,4 @@
 from fraction import Fraction
-import copy
 from operator import itemgetter
 from sympy import symbols, simplify, Add, solve, Eq
 
@@ -19,7 +18,9 @@ def print_matrix(matrix: list[list[Fraction]]) -> None:
     print()
 
 
-def transform_matrix(matrix: list[list[Fraction]], row: int, col: int):
+def transform_matrix(
+    matrix: list[list[Fraction]], row: int, col: int
+) -> list[list[Fraction]]:
     transformed_matrix = copy_matrix(matrix)
     enabling_element = matrix[row][col]
 
@@ -34,7 +35,7 @@ def transform_matrix(matrix: list[list[Fraction]], row: int, col: int):
     return transformed_matrix
 
 
-def find_enabling_element(a_matrix: list[list[Fraction]], current_row: int):
+def find_enabling_element(a_matrix: list[list[Fraction]], current_row: int) -> int:
     column = -1
 
     for j in range(len(a_matrix[current_row])):
@@ -45,7 +46,7 @@ def find_enabling_element(a_matrix: list[list[Fraction]], current_row: int):
     return column
 
 
-def copy_matrix(matrix: list[list[Fraction]]):
+def copy_matrix(matrix: list[list[Fraction]]) -> list[list[Fraction]]:
     matrix_copy = [row[:] for row in matrix]
     return matrix_copy
 
@@ -115,11 +116,13 @@ def select_main_element(matrix, cur_row):
     return ccol
 
 
-def write_intermediate_matrix_to_file(filepath, matrix):
-    pass
+def write_intermediate_matrix_to_file(filepath: str, matrix: list[list[Fraction]]):
+    with open(filepath, "w") as file:
+        for row in matrix:
+            file.write(str(list(map(str, row))))
 
 
-def Gauss_Jordan_elimination(original_matrix):
+def Gauss_Jordan_elimination(original_matrix: list[list[Fraction]]):
     a = copy_matrix(original_matrix)
 
     for row in range(len(a)):
@@ -140,7 +143,7 @@ def Gauss_Jordan_elimination(original_matrix):
     return a
 
 
-def have_incorrect_row(matrix):
+def have_incorrect_row(matrix: list[list[Fraction]]):
     res = False
 
     for i in range(len(matrix)):
@@ -158,7 +161,7 @@ def have_incorrect_row(matrix):
     return res
 
 
-def is_identity_matrix(matrix):
+def is_identity_matrix(matrix: list[list[Fraction]]):
     current_k = 0
     if len(matrix) != len(matrix[0]) - 1:
         return False
@@ -176,7 +179,7 @@ def is_identity_matrix(matrix):
     return True
 
 
-def find_common_solution(matrix):
+def find_common_solution(matrix: list[list[Fraction]]):
     solutions = []
     for i, row in enumerate(matrix):
         expression = create_linear_expression(len(row) - 1)
@@ -191,7 +194,7 @@ def find_common_solution(matrix):
     return solutions
 
 
-def find_system_solution(matrix):
+def find_system_solution(matrix: list[list[Fraction]]):
     answer = "нет решений"
     answer_system = {}
 
@@ -211,11 +214,11 @@ def find_system_solution(matrix):
     return (answer, answer_system)
 
 
-def write_answer_to_file(filepath, answer_object):
+def write_answer_to_file(filepath: str, answer_object):
     pass
 
 
-def solve_linear_system(matrix):
+def solve_linear_system(matrix: list[list[Fraction]]) -> None:
     eliminated_matrix = Gauss_Jordan_elimination(matrix)
 
     answer, answer_system = find_system_solution(eliminated_matrix)
@@ -223,14 +226,6 @@ def solve_linear_system(matrix):
     answer_object = {"answer": answer, "answer_system": answer_system}
     write_answer_to_file("./answer.json", answer_object)
 
-
-def FractionMatrixEqual(m1, m2) -> bool:
-    for i in range(len(m1)):
-        for j in range(len(m2)):
-            if m1[i][j] != m2[i][j]:
-              return False
-    
-    return True
 
 def matrices_are_equal(
     matrix1: list[list[Fraction]], matrix2: list[list[Fraction]]
@@ -243,7 +238,7 @@ def matrices_are_equal(
     return True
 
 
-def create_linear_expression(n):
+def create_linear_expression(n: int):
     var_symbols = symbols([f"x{i + 1}" for i in range(n)])
     coef_symbols = symbols([f"k{i + 1}" for i in range(n)])
 
