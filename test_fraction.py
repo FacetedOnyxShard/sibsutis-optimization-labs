@@ -271,6 +271,16 @@ class TestFractionMethods:
         assert str(Fraction(5)) == "5"
         assert str(Fraction(4, 2)) == "2"
 
+    def test_string_to_fraction(self):
+        """Преобразование дроби вида 'm/n' к типу Fraction"""
+        assert Fraction.to_fraction("2/3") == Fraction(2, 3)
+        assert Fraction.to_fraction("-5/7") == Fraction(-5, 7)
+        assert Fraction.to_fraction("4/-5") == Fraction(-4, 5)
+        assert Fraction.to_fraction("-6/-5") == Fraction(6, 5)
+        assert Fraction.to_fraction("-113/101") == Fraction(-113, 101)
+        assert Fraction.to_fraction("1") == Fraction(1)
+        assert Fraction.to_fraction("0") == Fraction(0)
+
 
 class TestFractionEdgeCases:
     def test_large_numbers(self):
