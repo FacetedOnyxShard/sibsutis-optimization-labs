@@ -1,6 +1,7 @@
 from fraction import Fraction
 from operator import itemgetter
 from sympy import symbols, simplify, Add, solve, Eq
+from enum import Enum
 
 
 def read_matrix_from_file(filename: str) -> list[list[Fraction]]:
@@ -122,7 +123,9 @@ def write_intermediate_matrix_to_file(filepath: str, matrix: list[list[Fraction]
             file.write(str(list(map(str, row))))
 
 
-def Gauss_Jordan_elimination(original_matrix: list[list[Fraction]]):
+def Gauss_Jordan_elimination(
+    original_matrix: list[list[Fraction]], show_intermediate=0
+):
     a = copy_matrix(original_matrix)
 
     for row in range(len(a)):
@@ -138,7 +141,8 @@ def Gauss_Jordan_elimination(original_matrix: list[list[Fraction]]):
         a_hat = strike_zero_rows(a_hat, row)
         a = copy_matrix(a_hat)
 
-        write_intermediate_matrix_to_file("./matrix.json", a)
+        if show_intermediate:
+            write_intermediate_matrix_to_file("./matrix.txt", a)
 
     return a
 
@@ -148,7 +152,7 @@ def have_incorrect_row(matrix: list[list[Fraction]]):
 
     for i in range(len(matrix)):
         is_zero_row = True
-        last_element_in_row = matrix[i][len(matrix[i]) - 1]
+        last_element_in_row = matrix[i][-1]
         for j in range(len(matrix) - 1):
             if matrix[i][j] != Fraction(0):
                 is_zero_row = False
@@ -194,19 +198,25 @@ def find_common_solution(matrix: list[list[Fraction]]):
     return solutions
 
 
+class Answer(str, Enum):
+    No = "нет решений"
+    One = "одно решение"
+    Infinity = "бесконечно много решений"
+
+
 def find_system_solution(matrix: list[list[Fraction]]):
-    answer = "нет решений"
+    answer = Answer.No
     answer_system = {}
 
     if have_incorrect_row(matrix):
         pass
     elif is_identity_matrix(matrix):
-        answer = "одно решение"
+        answer = Answer.One
         for i, row in enumerate(matrix, start=1):
             key = f"x{i}"
             answer_system[key] = row[-1]
     else:
-        answer = "бесконечно много решений"
+        answer = Answer.Infinity
         solutions = find_common_solution(matrix)
         for key, value in solutions:
             answer_system[key] = value
@@ -248,10 +258,16 @@ def create_linear_expression(n: int):
 
 
 def main() -> None:
-    expr = create_linear_expression(2)
-    equation = Eq(expr, 10)
-    equation = equation.subs("k1", 10)
-    print(equation)
+    original_matrix = read_matrix_from_file("./test_matrix/pr05_task.txt")
+    expected_matrix = read_matrix_from_file("./test_matrix/pr05_answer.txt")
+    expected_answer = Answer.One
+    expected_system = {"x1": 1, "x2": -1, "x3": 3, "x4": 4}
+
+    eliminated_matrix = Gauss_Jordan_elimination(original_matrix)
+
+    matrices_are_equal(eliminated_matrix, expected_matrix)
+
+    answer, system = find_system_solution(eliminated_matrix)
 
 
 if __name__ == "__main__":
