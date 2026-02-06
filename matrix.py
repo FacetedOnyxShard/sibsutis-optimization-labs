@@ -6,7 +6,7 @@ def read_matrix_from_file(filename: str) -> list[list[Fraction]]:
     with open(filename) as file:
         matrix = []
         for line in file:
-            matrix.append(list(map(Fraction, map(int, line.split()))))
+            matrix.append(list(map(Fraction.to_fraction, line.split())))
 
     return matrix
 
