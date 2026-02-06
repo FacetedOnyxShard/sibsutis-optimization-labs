@@ -1,5 +1,6 @@
 from fraction import Fraction
 import copy
+from operator import itemgetter
 
 
 def read_matrix_from_file(filename: str) -> list[list[Fraction]]:
@@ -87,22 +88,55 @@ def strike_zero_rows(matrix, row) -> list[list[Fraction]]:
     return new_matrix
 
 
+def swap_rows(matrix, row1, row2):
+    if not (0 <= row1 < len(matrix) and 0 <= row2 < len(matrix)):
+        raise IndexError()
+
+    temp = matrix[row1]
+    matrix[row1] = matrix[row2]
+    matrix[row2] = temp
+
+
+def select_main_element(matrix, cur_row):
+    ccol = 0
+    ccol_abs_elem_and_idxs = []
+
+    for ccol in range(len(matrix[0])):
+        for crow in range(cur_row, len(matrix)):
+            ccol_abs_elem_and_idxs.append((abs(matrix[crow][ccol]), crow))
+
+        max_abs_elem_and_idx = max(ccol_abs_elem_and_idxs, key=itemgetter(0))
+        if max_abs_elem_and_idx[0] != Fraction(0):
+            break
+
+    swap_rows(matrix, cur_row, max_abs_elem_and_idx[1])
+
+    return ccol
+
+
 def Gauss_Jordan_elimination(original_matrix):
     a = matrix_copy(original_matrix)
 
     for row in range(len(a)):
         if row >= len(a):
             break
-        col = find_enabling_element(a, row)
+
+        col = select_main_element(a, row)
+        # col = find_enabling_element(a, row) # нужна если
+        # # не используется select_main_element
+
         a_hat = transform_matrix(a, row, col)
         calculate_elements(a, a_hat, row, col)
         a_hat = strike_zero_rows(a_hat, row)
         a = matrix_copy(a_hat)
 
+    # нужно выводить промежуточные матрицы,
+    # после каждого шага исключений
+
     # нужно получать
     # либо бесконечно много решений и выводить общее решение
     # либо нет решений
-    # либо одно решение находить его и выводит переменные
+    # либо одно решение находить его и выводить переменные
 
     return a
 
@@ -117,25 +151,17 @@ def FractionMatrixEqual(m1, m2) -> bool:
 
 
 def main() -> None:
-    original_matrix = read_matrix_from_file("./test_matrix/pr04_task.txt")
+    matrix = [[0 for _ in range(10)] for _ in range(10)]
 
-    #  1  -1/2   0    0  -1/2  | -1/2
-    #  0    0    1    0     4  |  3
-    #  0    0    0    1     0  |  0
-    expected_matrix = [
-        [
-            Fraction(1),
-            Fraction(-1, 2),
-            Fraction(0),
-            Fraction(0),
-            Fraction(-1, 2),
-            Fraction(-1, 2),
-        ],
-        [Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(4), Fraction(3)],
-        [Fraction(0), Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(0)],
-    ]
+    for col in range(len(matrix[1])):
+        matrix[1][col] = 1
 
-    res = Gauss_Jordan_elimination(original_matrix)
+    second_row = matrix[1]
+
+    for col in range(len(second_row)):
+        second_row[col] = 10
+
+    print(matrix)
 
 
 if __name__ == "__main__":
