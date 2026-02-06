@@ -148,3 +148,13 @@ class Fraction:
             return str(self.numerator)
 
         return f"{self.numerator}/{self.denominator}"
+
+    @staticmethod
+    def to_fraction(fraction: str):
+        if "/" in fraction:
+            numerator = int(fraction[: fraction.find("/")])
+            denominator = int(fraction[fraction.find("/") + 1 :])
+
+            return Fraction(numerator, denominator)
+
+        return Fraction(int(fraction))
