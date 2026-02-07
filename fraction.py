@@ -1,6 +1,3 @@
-from sympy import Rational
-
-
 class Fraction:
     def __init__(self, numerator, denominator=1):
         if type(numerator) is not int or type(denominator) is not int:
