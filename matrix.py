@@ -271,16 +271,7 @@ def create_linear_expression(n: int):
 
 
 def main() -> None:
-    original_matrix = read_matrix_from_file("./test_matrix/pr04_task.txt")
-    expected_matrix = read_matrix_from_file("./test_matrix/pr04_answer.txt")
-    expected_answer = Answer.Infinity
-    expected_system = {}  # надо поменять на правильную систему
-
-    eliminated_matrix = Gauss_Jordan_elimination(original_matrix)
-
-    answer, system = find_system_solution(eliminated_matrix)
-
-    print(system)
+    pass
 
 
 if __name__ == "__main__":
