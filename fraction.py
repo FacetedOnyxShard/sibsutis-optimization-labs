@@ -1,5 +1,8 @@
 class Fraction:
     def __init__(self, numerator, denominator=1):
+        if type(numerator) is Fraction or type(denominator) is Fraction:
+            numerator, denominator = self.convert_to_int(numerator, denominator)
+
         if type(numerator) is not int or type(denominator) is not int:
             raise TypeError("Fraction must be integer")
 
@@ -19,6 +22,22 @@ class Fraction:
 
         self.numerator = numerator // divider
         self.denominator = denominator // divider
+
+    def convert_to_int(self, num, denom):
+        res_num = 0
+        res_denom = 0
+
+        if type(num) is Fraction and type(denom) is Fraction:
+            res_num = num.numerator * denom.denominator
+            res_denom = num.denominator * denom.numerator
+        elif type(num) is Fraction:
+            res_num = num.numerator
+            res_denom = num.denominator * denom
+        elif type(denom) is Fraction:
+            res_num = num * denom.denominator
+            res_denom = denom.numerator
+
+        return res_num, res_denom
 
     def __check_type(self, other):
         if not isinstance(other, Fraction):
