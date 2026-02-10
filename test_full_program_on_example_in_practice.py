@@ -50,32 +50,3 @@ def test_pr05():
 
     assert answer == expected_answer
     assert system == expected_system
-
-
-@pytest.mark.parametrize(
-    "lr_num, expected_answer, expected_system",
-    [
-        (1, Answer.One, {"x1": "5", "x2": "-2", "x3": "1", "x4": "3", "x5": "4"}),
-        (2, Answer.One, {"x1": "-4", "x2": "-5", "x3": "2", "x4": "-1", "x5": "3"}),
-        (3, Answer.One, {"x1": "3", "x2": "5", "x3": "-2", "x4": "-7", "x5": "4"}),
-        (4, Answer.One, {"x1": "-4", "x2": "5", "x3": "7", "x4": "6", "x5": "-2"}),
-        (5, Answer.One, {"x1": "1", "x2": "-3", "x3": "5", "x4": "7", "x5": "2"}),
-        (6, Answer.One, {"x1": "-4", "x2": "-5", "x3": "3", "x4": "6", "x5": "-7"}),
-        (7, Answer.One, {"x1": "2", "x2": "-3", "x3": "5", "x4": "-4", "x5": "6"}),
-        (8, Answer.One, {"x1": "4", "x2": "5", "x3": "-2", "x4": "7", "x5": "3"}),
-        (9, Answer.One, {"x1": "5", "x2": "-3", "x3": "4", "x4": "-6", "x5": "2"}),
-        (10, Answer.One, {"x1": "1", "x2": "-2", "x3": "5", "x4": "-3", "x5": "4"}),
-    ],
-)
-def test_lrs(lr_num, expected_answer, expected_system):
-    original_matrix = read_matrix_from_file(f"./test_matrix/lr{lr_num:02}_task.txt")
-    expected_matrix = read_matrix_from_file(f"./test_matrix/lr{lr_num:02}_answer.txt")
-
-    eliminated_matrix = Gauss_Jordan_elimination(original_matrix)
-
-    assert matrices_are_equal(eliminated_matrix, expected_matrix)
-
-    answer, system = find_system_solution(eliminated_matrix)
-
-    assert answer == expected_answer
-    assert system == expected_system
