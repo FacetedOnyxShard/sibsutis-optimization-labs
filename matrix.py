@@ -2,6 +2,7 @@ from fraction import Fraction
 from operator import itemgetter
 from sympy import symbols, sympify, Add, solve, Eq
 from enum import Enum
+import json
 
 
 def read_matrix_from_file(filename: str) -> list[list[Fraction]]:
@@ -118,9 +119,13 @@ def select_main_element(matrix, cur_row):
 
 
 def write_intermediate_matrix_to_file(filepath: str, matrix: list[list[Fraction]]):
-    with open(filepath, "w") as file:
-        for row in matrix:
+    with open(filepath, "a") as file:
+        for i, row in enumerate(matrix):
             file.write(str(list(map(str, row))))
+            if i + 1 == len(matrix):
+                file.write("\n\n")
+            else:
+                file.write("\n")
 
 
 def Gauss_Jordan_elimination(
@@ -238,15 +243,16 @@ def find_system_solution(matrix: list[list[Fraction]]):
 
 
 def write_answer_to_file(filepath: str, answer_object):
-    pass
+    with open(filepath, "w", encoding="utf-8") as file:
+        json.dump(answer_object, file)
 
 
 def solve_linear_system(matrix: list[list[Fraction]]) -> None:
-    eliminated_matrix = Gauss_Jordan_elimination(matrix)
+    eliminated_matrix = Gauss_Jordan_elimination(matrix, 1)
 
     answer, answer_system = find_system_solution(eliminated_matrix)
 
-    answer_object = {"answer": answer, "answer_system": answer_system}
+    answer_object = {"answer": str(answer), "answer_system": answer_system}
     write_answer_to_file("./answer.json", answer_object)
 
 
@@ -271,8 +277,8 @@ def create_linear_expression(n: int):
 
 
 def main() -> None:
-    pass
-
+    matrix = read_matrix_from_file("test_matrix/pr01_task.txt")
+    solve_linear_system(matrix)
 
 if __name__ == "__main__":
     main()
