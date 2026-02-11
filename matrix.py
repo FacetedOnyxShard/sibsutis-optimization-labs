@@ -280,5 +280,6 @@ def main() -> None:
     matrix = read_matrix_from_file("test_matrix/pr01_task.txt")
     solve_linear_system(matrix)
 
+
 if __name__ == "__main__":
     main()
