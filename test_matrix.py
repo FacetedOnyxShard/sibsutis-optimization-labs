@@ -84,6 +84,6 @@ def test_matrix_transformation():
         [Fraction(0), Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(0)],
     ]
 
-    res = Gauss_Jordan_elimination(original_matrix)
+    res, matrices = Gauss_Jordan_elimination(original_matrix)
 
     assert matrices_are_equal(res, expected_matrix) == True

@@ -8,7 +8,7 @@ def test_pr01():
     expected_answer = Answer.No
     expected_system = {}
 
-    eliminated_matrix = Gauss_Jordan_elimination(original_matrix)
+    eliminated_matrix, intermediate_matrices = Gauss_Jordan_elimination(original_matrix)
 
     assert matrices_are_equal(eliminated_matrix, expected_matrix)
 
@@ -26,7 +26,7 @@ def test_pr04():
     expected_system["x3"] = sympify("3 - 4*x5")
     expected_system["x4"] = sympify("0")
 
-    eliminated_matrix = Gauss_Jordan_elimination(original_matrix)
+    eliminated_matrix, intermediate_matrices = Gauss_Jordan_elimination(original_matrix)
 
     assert matrices_are_equal(eliminated_matrix, expected_matrix)
 
@@ -42,7 +42,7 @@ def test_pr05():
     expected_answer = Answer.One
     expected_system = {"x1": "1", "x2": "-1", "x3": "3", "x4": "4"}
 
-    eliminated_matrix = Gauss_Jordan_elimination(original_matrix)
+    eliminated_matrix, intermediate_matrices = Gauss_Jordan_elimination(original_matrix)
 
     assert matrices_are_equal(eliminated_matrix, expected_matrix)
 

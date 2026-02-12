@@ -3,6 +3,7 @@ from operator import itemgetter
 from sympy import symbols, sympify, Add, solve, Eq
 from enum import Enum
 import json
+import os
 
 
 def read_matrix_from_file(filename: str) -> list[list[Fraction]]:
@@ -148,10 +149,9 @@ def write_intermediate_matrix_to_file(filepath: str, matrix: list[list[Fraction]
                 file.write("\n")
 
 
-def Gauss_Jordan_elimination(
-    original_matrix: list[list[Fraction]], show_intermediate=0
-):
+def Gauss_Jordan_elimination(original_matrix: list[list[Fraction]]):
     a = copy_matrix(original_matrix)
+    intermediate_matrices_container = []
 
     for row in range(len(a)):
         if row >= len(a):
@@ -168,12 +168,11 @@ def Gauss_Jordan_elimination(
         a_hat = strike_zero_rows(a_hat, row)
         a = copy_matrix(a_hat)
 
-        if show_intermediate:
-            if col == -1 and matrices_are_equal(a, a_hat):
-                continue
-            write_intermediate_matrix_to_file("./matrix.txt", a)
+        if col == -1 and matrices_are_equal(a, a_hat):
+            continue
+        intermediate_matrices_container.append(a)
 
-    return a
+    return a, intermediate_matrices_container
 
 
 def have_incorrect_row(matrix: list[list[Fraction]]):
@@ -272,12 +271,13 @@ def write_answer_to_file(filepath: str, answer_object):
 
 
 def solve_linear_system(matrix: list[list[Fraction]]) -> None:
-    eliminated_matrix = Gauss_Jordan_elimination(matrix, 1)
+    eliminated_matrix, intermediate_matrices = Gauss_Jordan_elimination(matrix)
 
     answer, answer_system = find_system_solution(eliminated_matrix)
 
     answer_object = {"answer": answer.value, "answer_system": answer_system}
-    write_answer_to_file("./answer.json", answer_object)
+
+    return answer_object, intermediate_matrices
 
 
 def matrices_are_equal(
@@ -300,17 +300,27 @@ def create_linear_expression(n: int):
     return expression
 
 
-def truncate_file(filepath: str):
+def create_or_truncate_file(filepath: str):
     with open(filepath, "w"):
         pass
 
 
 def main() -> None:
-    matrix = read_matrix_from_file("test_matrix/pr04_task.txt")
+    matrix = read_matrix_from_file("test_matrix/pr05_task.txt")
 
-    truncate_file("./matrix.txt")
+    dir_for_answers = "answer"
+    answer_filepath = f"./{dir_for_answers}/answer.json"
+    matrices_filepath = f"./{dir_for_answers}/matrix.txt"
 
-    solve_linear_system(matrix)
+    os.makedirs(dir_for_answers, exist_ok=True)
+    create_or_truncate_file(matrices_filepath)
+    create_or_truncate_file(answer_filepath)
+
+    answer_obj, intermediate_matrices = solve_linear_system(matrix)
+
+    write_answer_to_file(answer_filepath, answer_obj)
+    for matrix in intermediate_matrices:
+        write_intermediate_matrix_to_file(matrices_filepath, matrix)
 
 
 if __name__ == "__main__":
