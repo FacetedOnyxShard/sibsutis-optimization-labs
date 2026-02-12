@@ -306,7 +306,8 @@ def create_or_truncate_file(filepath: str):
 
 
 def main() -> None:
-    matrix = read_matrix_from_file("test_matrix/pr05_task.txt")
+    task_id = "lr01"
+    matrix = read_matrix_from_file(f"test_matrix/{task_id}_task.txt")
 
     dir_for_answers = "answer"
     answer_filepath = f"./{dir_for_answers}/answer.json"
