@@ -121,7 +121,14 @@ def select_main_element(matrix, cur_row):
 def write_intermediate_matrix_to_file(filepath: str, matrix: list[list[Fraction]]):
     with open(filepath, "a") as file:
         for i, row in enumerate(matrix):
-            file.write(str(list(map(str, row))))
+
+            for j, item in enumerate(matrix[i]):
+                if j == 0:
+                    file.write(f"{str(item)}")
+                    continue
+
+                file.write(f"{str(item):>10}")
+
             if i + 1 == len(matrix):
                 file.write("\n\n")
             else:
@@ -276,8 +283,16 @@ def create_linear_expression(n: int):
     return expression
 
 
+def truncate_file(filepath: str):
+    with open(filepath, "w"):
+        pass
+
+
 def main() -> None:
     matrix = read_matrix_from_file("test_matrix/pr01_task.txt")
+
+    truncate_file("./matrix.txt")
+
     solve_linear_system(matrix)
 
 
