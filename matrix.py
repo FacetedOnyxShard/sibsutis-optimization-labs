@@ -270,7 +270,7 @@ def write_answer_to_file(filepath: str, answer_object):
         json.dump(answer_object, file, indent=2, default=str, ensure_ascii=False)
 
 
-def solve_linear_system(matrix: list[list[Fraction]]) -> None:
+def solve_linear_system(matrix: list[list[Fraction]]) -> tuple:
     eliminated_matrix, intermediate_matrices = Gauss_Jordan_elimination(matrix)
 
     answer, answer_system = find_system_solution(eliminated_matrix)
