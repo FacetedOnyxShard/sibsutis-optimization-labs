@@ -105,15 +105,28 @@ def select_main_element(matrix, cur_row):
     ccol = 0
     ccol_abs_elem_and_idxs = []
 
-    for ccol in range(len(matrix[0])):
+    # колонки идут с начала строки,
+    # можно сделать с предыдущей колонки + 1
+    for ccol in range(len(matrix[0]) - 1):
         for crow in range(cur_row, len(matrix)):
+            if matrix[crow][ccol] == Fraction(0):
+                continue
+
             ccol_abs_elem_and_idxs.append((abs(matrix[crow][ccol]), crow))
+
+        if len(ccol_abs_elem_and_idxs) == 0:
+            continue
 
         max_abs_elem_and_idx = max(ccol_abs_elem_and_idxs, key=itemgetter(0))
         if max_abs_elem_and_idx[0] != Fraction(0):
             break
 
-    swap_rows(matrix, cur_row, max_abs_elem_and_idx[1])
+    last_col_idx = len(matrix[0]) - 2
+    last_row_idx = len(matrix) - 1
+    if ccol == last_col_idx and matrix[last_row_idx][ccol] == Fraction(0):
+        ccol = -1
+    else:
+        swap_rows(matrix, cur_row, max_abs_elem_and_idx[1])
 
     return ccol
 
@@ -148,12 +161,16 @@ def Gauss_Jordan_elimination(
         # col = find_enabling_element(a, row) # нужна если
         # # не используется select_main_element
 
-        a_hat = transform_matrix(a, row, col)
-        calculate_elements(a, a_hat, row, col)
+        if col != -1:  # все элементы в левой части равны 0, правая - неизвестно
+            a_hat = transform_matrix(a, row, col)
+            calculate_elements(a, a_hat, row, col)
+
         a_hat = strike_zero_rows(a_hat, row)
         a = copy_matrix(a_hat)
 
         if show_intermediate:
+            if col == -1 and matrices_are_equal(a, a_hat):
+                continue
             write_intermediate_matrix_to_file("./matrix.txt", a)
 
     return a
@@ -251,7 +268,7 @@ def find_system_solution(matrix: list[list[Fraction]]):
 
 def write_answer_to_file(filepath: str, answer_object):
     with open(filepath, "w", encoding="utf-8") as file:
-        json.dump(answer_object, file)
+        json.dump(answer_object, file, indent=2, default=str, ensure_ascii=False)
 
 
 def solve_linear_system(matrix: list[list[Fraction]]) -> None:
@@ -259,7 +276,7 @@ def solve_linear_system(matrix: list[list[Fraction]]) -> None:
 
     answer, answer_system = find_system_solution(eliminated_matrix)
 
-    answer_object = {"answer": str(answer), "answer_system": answer_system}
+    answer_object = {"answer": answer.value, "answer_system": answer_system}
     write_answer_to_file("./answer.json", answer_object)
 
 
@@ -289,7 +306,7 @@ def truncate_file(filepath: str):
 
 
 def main() -> None:
-    matrix = read_matrix_from_file("test_matrix/pr01_task.txt")
+    matrix = read_matrix_from_file("test_matrix/pr04_task.txt")
 
     truncate_file("./matrix.txt")
 
