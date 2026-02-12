@@ -221,20 +221,20 @@ def find_common_solution(matrix: list[list[Fraction]]):
         # можно создавать выражение только 1 раз
         expression = create_linear_expression(len(row) - 1)
         equation = Eq(expression, frac_to_sympy(row[-1]))
-        free_var_idx = -1
-        free_var_found = False
+        base_var_idx = -1
+        base_var_found = False
 
         for j, value in enumerate(row):
             if j == len(row) - 1:  # нужно для того, чтобы не включать расширенную часть
                 continue  # можно написать break
-            if not free_var_found and value == Fraction(1):
-                free_var_idx = j + 1
-                free_var_found = True
+            if not base_var_found and value == Fraction(1):
+                base_var_idx = j + 1
+                base_var_found = True
 
             equation = equation.subs(f"k{j + 1}", frac_to_sympy(value))
 
-        solution = solve(equation, f"x{free_var_idx}")
-        solutions.append((f"x{free_var_idx}", solution[0]))
+        solution = solve(equation, f"x{base_var_idx}")
+        solutions.append((f"x{base_var_idx}", solution[0]))
 
     return solutions
 
