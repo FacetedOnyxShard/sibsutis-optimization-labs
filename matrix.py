@@ -132,21 +132,31 @@ def select_main_element(matrix, cur_row):
     return ccol
 
 
-def write_intermediate_matrix_to_file(filepath: str, matrix: list[list[Fraction]]):
-    with open(filepath, "a") as file:
-        for i, row in enumerate(matrix):
+def counter(reset: bool = False):
+    if not hasattr(counter, "count"):
+        counter.count = 0
+    if reset:
+        counter.count = 0
+    counter.count += 1
+    return counter.count
 
-            for j, item in enumerate(matrix[i]):
-                if j == 0:
-                    file.write(f"{str(item)}")
-                    continue
 
-                file.write(f"{str(item):>10}")
+def convert_matrix_to_json_field(matrix: list[list[Fraction]]):
+    key = f"matrix {counter()}"
+    value = []
 
-            if i + 1 == len(matrix):
-                file.write("\n\n")
-            else:
-                file.write("\n")
+    for i, row in enumerate(matrix):
+        matrix_row = []
+        for j, item in enumerate(matrix[i]):
+            if j == 0:
+                matrix_row.append(f"{str(item)}")
+                continue
+
+            matrix_row.append(f"{str(item):>12}")
+
+        value.append("".join(matrix_row))
+
+    return key, value
 
 
 def Gauss_Jordan_elimination(original_matrix: list[list[Fraction]]):
@@ -266,7 +276,7 @@ def find_system_solution(matrix: list[list[Fraction]]):
 
 
 def write_answer_to_file(filepath: str, answer_object):
-    with open(filepath, "w", encoding="utf-8") as file:
+    with open(filepath, "a", encoding="utf-8") as file:
         json.dump(answer_object, file, indent=2, default=str, ensure_ascii=False)
 
 
@@ -311,17 +321,19 @@ def main() -> None:
 
     dir_for_answers = "answer"
     answer_filepath = f"./{dir_for_answers}/answer.json"
-    matrices_filepath = f"./{dir_for_answers}/matrix.txt"
 
     os.makedirs(dir_for_answers, exist_ok=True)
-    create_or_truncate_file(matrices_filepath)
     create_or_truncate_file(answer_filepath)
 
     answer_obj, intermediate_matrices = solve_linear_system(matrix)
 
-    write_answer_to_file(answer_filepath, answer_obj)
+    full_answer = {}
     for matrix in intermediate_matrices:
-        write_intermediate_matrix_to_file(matrices_filepath, matrix)
+        key, value = convert_matrix_to_json_field(matrix)
+        full_answer[key] = value
+    full_answer["solution"] = answer_obj
+
+    write_answer_to_file(answer_filepath, full_answer)
 
 
 if __name__ == "__main__":
