@@ -49,6 +49,10 @@ def find_enabling_element(a_matrix: list[list[Fraction]], current_row: int) -> i
     return column
 
 
+def copy_arr(arr: list):
+    return arr[:]
+
+
 def copy_matrix(matrix: list[list[Fraction]]) -> list[list[Fraction]]:
     matrix_copy = [row[:] for row in matrix]
     return matrix_copy
@@ -305,23 +309,70 @@ def create_or_truncate_file(filepath: str):
         pass
 
 
+def copy_from(arr, start: int, k: int):
+    return [arr[i] for i in range(start, start + k)]
+
+
+def make_seq(n: int):
+    return [i + 1 for i in range(n)]
+
+
+def combination_generation(n: int, k: int):
+    if k == 0:
+        return [[]]
+    if n < k:
+        return []
+
+    p = k
+    comb = make_seq(k)
+
+    combinations = [comb.copy()]
+
+    while p > 0:
+        if comb[0] == n - k + 1:
+            break
+
+        comb = comb.copy()
+
+        if comb[p - 1] >= n:
+            j = 1
+
+            while p > 0 and comb[p - 1] >= n - j:
+                p -= 1
+
+            comb[p - 1] += 1
+            for i in range(p, k):
+                comb[i] = comb[i - 1] + 1
+            combinations.append(comb)
+
+            p = k
+            continue
+
+        comb[p - 1] += 1
+        combinations.append(comb)
+
+    return combinations
+
+
 def main() -> None:
-    task_id = "lr01"
-    matrix = read_matrix_from_file(f"test_matrix/{task_id}_task.txt")
+    input = [1, 2, 3, 4, 5]
+    n = 5
+    k = 3
 
-    dir_for_answers = "answer"
-    answer_filepath = f"./{dir_for_answers}/answer.json"
-    matrices_filepath = f"./{dir_for_answers}/matrix.txt"
+    expected = [
+        [1, 2, 3],
+        [1, 2, 4],
+        [1, 2, 5],
+        [1, 3, 4],
+        [4, 3, 5],
+        [1, 4, 5],
+        [2, 3, 4],
+        [2, 3, 5],
+        [2, 4, 5],
+        [3, 4, 5],
+    ]
 
-    os.makedirs(dir_for_answers, exist_ok=True)
-    create_or_truncate_file(matrices_filepath)
-    create_or_truncate_file(answer_filepath)
-
-    answer_obj, intermediate_matrices = solve_linear_system(matrix)
-
-    write_answer_to_file(answer_filepath, answer_obj)
-    for matrix in intermediate_matrices:
-        write_intermediate_matrix_to_file(matrices_filepath, matrix)
+    combination_generation(5, 5) == [[1, 2, 3, 4, 5]]
 
 
 if __name__ == "__main__":
