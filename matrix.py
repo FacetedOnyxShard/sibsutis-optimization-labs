@@ -364,25 +364,35 @@ def combination_generation(n: int, k: int):
     return combinations
 
 
+def find_col_elements(matrix: list[list[Fraction]], col_idxs: list[int]):
+    grouped_by_x = []
+    for col_idx in col_idxs:
+        row_idxs = []
+        for row_idx in range(len(matrix)):
+            if matrix[row_idx][col_idx] != Fraction(0):
+                row_idxs.append(row_idx)
+
+        grouped_by_x.append((col_idx, row_idxs))
+
+    return grouped_by_x
+
+
 def main() -> None:
-    input = [1, 2, 3, 4, 5]
-    n = 5
-    k = 3
+    task_id = "pr04"
+    matrix = read_matrix_from_file(f"test_matrix/{task_id}_task.txt")
 
-    expected = [
-        [1, 2, 3],
-        [1, 2, 4],
-        [1, 2, 5],
-        [1, 3, 4],
-        [4, 3, 5],
-        [1, 4, 5],
-        [2, 3, 4],
-        [2, 3, 5],
-        [2, 4, 5],
-        [3, 4, 5],
-    ]
+    dir_for_answers = "answer"
+    answer_filepath = f"./{dir_for_answers}/answer.json"
 
-    combination_generation(5, 5) == [[1, 2, 3, 4, 5]]
+    os.makedirs(dir_for_answers, exist_ok=True)
+    create_or_truncate_file(answer_filepath)
+
+    answer_obj, intermediate_matrices = solve_linear_system(matrix)
+
+    idxs_rows_for_certain_cols = find_col_elements(intermediate_matrices[-1], [0, 1])
+
+    for key, value in idxs_rows_for_certain_cols:
+        print(f"{key} = {value}")
 
 
 if __name__ == "__main__":

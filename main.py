@@ -2,7 +2,7 @@ from matrix import *
 
 
 def main() -> None:
-    task_id = "lr01"
+    task_id = "pr04"
     matrix = read_matrix_from_file(f"test_matrix/{task_id}_task.txt")
 
     dir_for_answers = "answer"
