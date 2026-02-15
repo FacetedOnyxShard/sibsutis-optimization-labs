@@ -364,35 +364,75 @@ def combination_generation(n: int, k: int):
     return combinations
 
 
-def find_col_elements(matrix: list[list[Fraction]], col_idxs: list[int]):
-    grouped_by_x = []
-    for col_idx in col_idxs:
-        row_idxs = []
-        for row_idx in range(len(matrix)):
-            if matrix[row_idx][col_idx] != Fraction(0):
-                row_idxs.append(row_idx)
+def find_pivot_element(matrix: list[list[Fraction]], col, start_row=0):
+    for row_idx in range(start_row, len(matrix)):
+        if matrix[row_idx][col] != Fraction(0):
+            return row_idx
 
-        grouped_by_x.append((col_idx, row_idxs))
-
-    return grouped_by_x
+    return -1
 
 
 def main() -> None:
-    task_id = "pr04"
-    matrix = read_matrix_from_file(f"test_matrix/{task_id}_task.txt")
+    TASK_ID = "basics_solution_lect_ex01"
+    MATRIX_DIR = "matrix_examples"
 
-    dir_for_answers = "answer"
-    answer_filepath = f"./{dir_for_answers}/answer.json"
+    MATRIX = read_matrix_from_file(f"{MATRIX_DIR}/{TASK_ID}_task.txt")
 
-    os.makedirs(dir_for_answers, exist_ok=True)
-    create_or_truncate_file(answer_filepath)
+    DIR_FOR_ANSWERS = "answer"
+    ANSWERS_FILEPATH = f"./{DIR_FOR_ANSWERS}/answer.json"
 
-    answer_obj, intermediate_matrices = solve_linear_system(matrix)
+    os.makedirs(DIR_FOR_ANSWERS, exist_ok=True)
+    create_or_truncate_file(ANSWERS_FILEPATH)
 
-    idxs_rows_for_certain_cols = find_col_elements(intermediate_matrices[-1], [0, 1])
+    answer_obj, intermediate_matrices = solve_linear_system(MATRIX)
 
-    for key, value in idxs_rows_for_certain_cols:
-        print(f"{key} = {value}")
+    #
+    matrix = intermediate_matrices[-1]
+
+    n = len(matrix[0]) - 1
+    k = len(matrix)
+
+    answers = []
+    for var_list in combination_generation(n, k):
+        a = copy_matrix(matrix)
+        row_idxs = []
+        answer = []
+        for i in range(len(var_list)):
+            col = var_list[i] - 1
+            row_idx = find_pivot_element(a, col, i)
+            row_idxs.append(row_idx)
+
+            if row_idx == -1:
+                answers.append(answer)
+                break
+
+            a_hat = transform_matrix(a, row_idx, col)
+            calculate_elements(a, a_hat, row_idx, col)
+
+            a_hat = strike_zero_rows(a_hat, row_idx)
+            a = copy_matrix(a_hat)
+
+            if i == len(var_list) - 1:
+                for j in range(len(var_list)):
+                    answer.append((f"x{var_list[j]}", a[row_idxs[j]][-1]))
+
+                k = 0
+                for j in range(len(a[0]) - 1):
+                    if k < len(var_list) and j == (var_list[k] - 1):
+                        k += 1
+                        continue
+                    answer.append((f"x{j + 1}", 0))
+
+                answers.append(answer)
+
+    i = 1
+    for row in answers:
+        print(f"{i}:  ", end="")
+        i += 1
+        for items in row:
+            print(items[0], end=" ")
+            print(str(items[1]), end="\t")
+        print()
 
 
 if __name__ == "__main__":
