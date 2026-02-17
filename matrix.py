@@ -364,12 +364,70 @@ def combination_generation(n: int, k: int):
     return combinations
 
 
-def find_pivot_element(matrix: list[list[Fraction]], col, start_row=0):
-    for row_idx in range(start_row, len(matrix)):
-        if matrix[row_idx][col] != Fraction(0):
+def find_pivot_element(matrix: list[list[Fraction]], col, used_rows):
+    rows = len(matrix)
+
+    for row_idx in range(rows):
+        if row_idx not in used_rows and matrix[row_idx][col] == Fraction(1):
+            return row_idx
+
+    for row_idx in range(rows):
+        if row_idx not in used_rows and matrix[row_idx][col] != Fraction(0):
             return row_idx
 
     return -1
+
+
+def find_basics_solutions(matrix):
+    n = len(matrix[0]) - 1
+    k = len(matrix)
+
+    answers = []
+    for var_list in combination_generation(n, k):
+        a = copy_matrix(matrix)
+        row_idxs = []
+        answer = []
+        used_rows = set()
+        for i in range(len(var_list)):
+            col = var_list[i] - 1
+            row_idx = find_pivot_element(a, col, used_rows)
+            row_idxs.append(row_idx)
+
+            if row_idx == -1:
+                answers.append(answer)
+                break
+
+            used_rows.add(row_idx)
+
+            a_hat = transform_matrix(a, row_idx, col)
+            calculate_elements(a, a_hat, row_idx, col)
+
+            a = copy_matrix(a_hat)
+
+            if i == len(var_list) - 1:
+                for j in range(len(var_list)):
+                    answer.append((f"x{var_list[j]}", a[row_idxs[j]][-1]))
+
+                k = 0
+                for j in range(len(a[0]) - 1):
+                    if k < len(var_list) and j == (var_list[k] - 1):
+                        k += 1
+                        continue
+                    answer.append((f"x{j + 1}", 0))
+
+                answers.append(answer)
+
+    return answers
+
+
+def out_basics_solutions(answers):
+    i = 1
+    for row in answers:
+        print(f"{i}:  ", end="")
+        i += 1
+        for items in row:
+            print(f"{items[0]} {str(items[1]):<10}", end="")
+        print()
 
 
 def main() -> None:
@@ -386,53 +444,9 @@ def main() -> None:
 
     answer_obj, intermediate_matrices = solve_linear_system(MATRIX)
 
-    #
-    matrix = intermediate_matrices[-1]
+    answers = find_basics_solutions(intermediate_matrices[-1])
 
-    n = len(matrix[0]) - 1
-    k = len(matrix)
-
-    answers = []
-    for var_list in combination_generation(n, k):
-        a = copy_matrix(matrix)
-        row_idxs = []
-        answer = []
-        for i in range(len(var_list)):
-            col = var_list[i] - 1
-            row_idx = find_pivot_element(a, col, i)
-            row_idxs.append(row_idx)
-
-            if row_idx == -1:
-                answers.append(answer)
-                break
-
-            a_hat = transform_matrix(a, row_idx, col)
-            calculate_elements(a, a_hat, row_idx, col)
-
-            a_hat = strike_zero_rows(a_hat, row_idx)
-            a = copy_matrix(a_hat)
-
-            if i == len(var_list) - 1:
-                for j in range(len(var_list)):
-                    answer.append((f"x{var_list[j]}", a[row_idxs[j]][-1]))
-
-                k = 0
-                for j in range(len(a[0]) - 1):
-                    if k < len(var_list) and j == (var_list[k] - 1):
-                        k += 1
-                        continue
-                    answer.append((f"x{j + 1}", 0))
-
-                answers.append(answer)
-
-    i = 1
-    for row in answers:
-        print(f"{i}:  ", end="")
-        i += 1
-        for items in row:
-            print(items[0], end=" ")
-            print(str(items[1]), end="\t")
-        print()
+    out_basics_solutions(answers)
 
 
 if __name__ == "__main__":
