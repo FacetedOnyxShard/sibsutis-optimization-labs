@@ -383,7 +383,7 @@ def find_basics_solutions(matrix):
     k = len(matrix)
 
     answers = []
-    for var_list in combination_generation(n, k):
+    for num, var_list in enumerate(combination_generation(n, k)):
         a = copy_matrix(matrix)
         row_idxs = []
         answer = []
@@ -404,6 +404,11 @@ def find_basics_solutions(matrix):
 
             a = copy_matrix(a_hat)
 
+            print(f"{num + 1}: x{var_list[0]} x{var_list[1]}")
+            print("-------------------------------------------------------------")
+            print_matrix(a)
+            print()
+
             if i == len(var_list) - 1:
                 for j in range(len(var_list)):
                     answer.append((f"x{var_list[j]}", a[row_idxs[j]][-1]))
@@ -414,6 +419,12 @@ def find_basics_solutions(matrix):
                         c += 1
                         continue
                     answer.append((f"x{j + 1}", 0))
+
+                basic_solution_values = tuple(
+                    str(value[1]) for value in sorted(pair for pair in answer)
+                )
+                print(f"Базисное решение: {basic_solution_values}")
+                print("*********************************************************")
 
                 answers.append(answer)
 
