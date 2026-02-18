@@ -298,7 +298,7 @@ def matrices_are_equal(
     matrix1: list[list[Fraction]], matrix2: list[list[Fraction]]
 ) -> bool:
     for i in range(len(matrix1)):
-        for j in range(len(matrix2)):
+        for j in range(len(matrix1[i])):
             if matrix1[i][j] != matrix2[i][j]:
                 return False
 
