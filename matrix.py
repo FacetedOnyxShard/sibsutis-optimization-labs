@@ -417,7 +417,7 @@ def find_basics_solutions(matrix):
 
                 answers.append(answer)
 
-    return answers
+    return [sorted(sublist) if sublist else [] for sublist in answers]
 
 
 def out_basics_solutions(answers):
