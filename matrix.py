@@ -408,10 +408,10 @@ def find_basics_solutions(matrix):
                 for j in range(len(var_list)):
                     answer.append((f"x{var_list[j]}", a[row_idxs[j]][-1]))
 
-                k = 0
+                c = 0
                 for j in range(len(a[0]) - 1):
-                    if k < len(var_list) and j == (var_list[k] - 1):
-                        k += 1
+                    if c < len(var_list) and j == (var_list[c] - 1):
+                        c += 1
                         continue
                     answer.append((f"x{j + 1}", 0))
 
