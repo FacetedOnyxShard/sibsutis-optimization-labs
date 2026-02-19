@@ -2,16 +2,18 @@ from matrix import *
 
 
 def main() -> None:
-    task_id = "pr04"
-    matrix = read_matrix_from_file(f"test_matrix/{task_id}_task.txt")
+    TASK_ID = "lr02_01"
+    MATRIX_DIR = "test_matrix"
 
-    dir_for_answers = "answer"
-    answer_filepath = f"./{dir_for_answers}/answer.json"
+    MATRIX = read_matrix_from_file(f"{MATRIX_DIR}/{TASK_ID}_task.txt")
 
-    os.makedirs(dir_for_answers, exist_ok=True)
-    create_or_truncate_file(answer_filepath)
+    DIR_FOR_ANSWERS = "answer"
+    ANSWERS_FILEPATH = f"./{DIR_FOR_ANSWERS}/answer.json"
 
-    answer_obj, intermediate_matrices = solve_linear_system(matrix)
+    os.makedirs(DIR_FOR_ANSWERS, exist_ok=True)
+    create_or_truncate_file(ANSWERS_FILEPATH)
+
+    answer_obj, intermediate_matrices = solve_linear_system(MATRIX)
 
     full_answer = {}
     for matrix in intermediate_matrices:
@@ -19,7 +21,7 @@ def main() -> None:
         full_answer[key] = value
     full_answer["solution"] = answer_obj
 
-    write_answer_to_file(answer_filepath, full_answer)
+    write_answer_to_file(ANSWERS_FILEPATH, full_answer)
 
 
 if __name__ == "__main__":

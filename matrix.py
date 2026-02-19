@@ -431,8 +431,8 @@ def out_basics_solutions(answers):
 
 
 def main() -> None:
-    TASK_ID = "basics_solution_lect_ex01"
-    MATRIX_DIR = "matrix_examples"
+    TASK_ID = "lr02_01"
+    MATRIX_DIR = "test_matrix"
 
     MATRIX = read_matrix_from_file(f"{MATRIX_DIR}/{TASK_ID}_task.txt")
 
