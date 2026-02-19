@@ -404,7 +404,7 @@ def find_basics_solutions(matrix):
 
             a = copy_matrix(a_hat)
 
-            print(f"{num + 1}: x{var_list[0]} x{var_list[1]}")
+            print(f"{num + 1}: " + " ".join(f"x{i}" for i in var_list))
             print("-------------------------------------------------------------")
             print_matrix(a)
             print()
@@ -442,10 +442,10 @@ def out_basics_solutions(answers):
 
 
 def main() -> None:
-    TASK_ID = "basics_solution_lect_ex01"
+    TASK_ID = "matrix1"
     MATRIX_DIR = "matrix_examples"
 
-    MATRIX = read_matrix_from_file(f"{MATRIX_DIR}/{TASK_ID}_task.txt")
+    MATRIX = read_matrix_from_file(f"{MATRIX_DIR}/{TASK_ID}.txt")
 
     DIR_FOR_ANSWERS = "answer"
     ANSWERS_FILEPATH = f"./{DIR_FOR_ANSWERS}/answer.json"
